@@ -1,4 +1,4 @@
-- 👋 Hi, I’m @Rounio77
+- 👋 Hi, I’m @pythonist
 - 👀 I’m interested in AI and Machine Learning
 - 🌱 I’m currently learning PYTHON
 - 💞️ I’m looking to collaborate on ...
