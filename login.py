@@ -1,39 +1,73 @@
-import tkinter as tk
-from tkinter import messagebox as mb
+import flet as ft
+from flet import TextField, Checkbox, ElevatedButton, Row, Column, Text
+from flet_core.control_event import ControlEvent
 
-class Login(tk.Frame):
-    def __init__(self, master):
-        super().__init__(master)
-        self.username = tk.Label(self, text="Username", font=("Ariel", 16))
-        self.password = tk.Label(self, text="Password", font=("Ariel", 16))
 
-        self.username_entry = tk.Entry(self)
-        self.password_entry = tk.Entry(self, show="#")
+def main(page: ft.Page) -> None:
+    page.title = "Login"
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.theme_mode = ft.ThemeMode.DARK
+    page.window_width = 400
+    page.window_height = 400
+    page.window_resizable = False
 
-        self.username.grid(row=0, sticky=tk.E)
-        self.password.grid(row=1, sticky=tk.E)
-        self.username_entry.grid(row=0, column=1)
-        self.password_entry.grid(row=1, column=1)
+    username_text: TextField = TextField(
+        label="Username", text_align=ft.TextAlign.LEFT, width=200
+    )
+    password_text: TextField = TextField(
+        label="Password", text_align=ft.TextAlign.LEFT, width=200, password=True
+    )
+    checkbox_signup: Checkbox = Checkbox(
+        label="I agree to the Terms and Conditions", value=False
+    )
+    submit_button: ElevatedButton = ElevatedButton(
+        text="Login", disabled=True, width=200
+    )
 
-        self.button = tk.Button(self, text="Login", command=self.login)
-        self.button.grid(columnspan=2)
-
-        self.pack()
-
-    def login(self):
-        get_username = self.username_entry.get()
-        get_password = self.password_entry.get()
-        if get_username == "User_name" and get_password == "Pass_word":
-            mb.showinfo("Login", "login successful")
+    def validate(param: ControlEvent) -> None:
+        if all([username_text.value, password_text.value, checkbox_signup.value]):
+            submit_button.disabled = False
         else:
-            mb.showerror("Login", "login failed")
+            submit_button.disabled = True
+        page.update()
 
-    def on_closing(self):
-        mb.askyesno(title="Quit", message="Are you sure you want to quit?")
-        self.master.destroy()
+    def submit(param: ControlEvent) -> None:
+        print("Username: ", username_text.value)
+        print("Password: ", password_text.value)
 
-app = tk.Tk()
-login = Login(app)
-app.protocol("WM_DELETE_WINDOW", login.on_closing)
-app.mainloop()
+        page.clean()
+        page.add(
+            Row(
+                controls=[
+                    Text(
+                        value=f"Welcome {username_text.value}", size=20, disabled=False
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.CENTER
+            )
+        )
 
+    username_text.on_change = validate
+    password_text.on_change = validate
+    checkbox_signup.on_change = validate
+    submit_button.on_click = submit
+
+    page.add(
+        Row(
+            controls=[
+                Column(
+                    [
+                        username_text,
+                        password_text,
+                        checkbox_signup,
+                        submit_button,
+                    ]
+                )
+            ],
+            alignment=ft.MainAxisAlignment.CENTER
+        )
+    )
+
+
+if __name__ == '__main__':
+    ft.app(target=main)
